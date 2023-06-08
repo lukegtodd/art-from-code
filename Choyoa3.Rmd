@@ -1,0 +1,596 @@
+---
+title: "CHOYOA 3"
+author: "Luke Todd"
+date: "2023-06-08"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 1
+
+```{r}
+library(ggplot2)
+library(tibble)
+```
+
+```{r}
+mpg
+```
+
+```{r}
+mpg |>
+  ggplot(aes(displ, hwy, colour = drv)) + 
+  geom_point()
+```
+
+```{r}
+mpg |>
+  ggplot(aes(displ, hwy, colour = drv, size = cyl)) + 
+  geom_point(show.legend = FALSE) + 
+  theme_void() + 
+  scale_color_brewer()
+```
+
+```{r}
+mpg |>
+  ggplot(aes(displ, hwy, colour = drv)) + 
+  geom_point(show.legend = FALSE, size = 4) + 
+  geom_point(show.legend = FALSE, size = 1, colour = "#222222") + 
+  coord_polar() + 
+  theme_void() + 
+  scale_color_brewer()
+```
+
+### Exercise 1
+```{r}
+mpg |>
+  ggplot(aes(hwy, cty, colour = drv)) + 
+  geom_point(show.legend = FALSE, size = 7) + 
+  geom_point(show.legend = FALSE, size = 0.5, colour = "lightyellow") + 
+  coord_polar() + 
+  theme_void() + 
+  scale_color_brewer()
+```
+
+### End of Exercise 1
+
+```{r}
+set.seed(1)
+n <- 50
+dat <- tibble(
+  x0 = runif(n),
+  y0 = runif(n),
+  x1 = x0 + runif(n, min = -.2, max = .2),
+  y1 = y0 + runif(n, min = -.2, max = .2),
+  shade = runif(n), 
+  size = runif(n)
+)
+dat
+```
+
+```{r}
+dat |> 
+  ggplot(aes(
+    x = x0,
+    y = y0,
+    xend = x1,
+    yend = y1,
+    colour = shade,
+    size = size
+  )) +
+  geom_segment(show.legend = FALSE) +
+  coord_polar() +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_color_viridis_c() + 
+  scale_size(range = c(0, 10)) + 
+  theme_void()
+```
+
+```{r}
+polar_art <- function(seed, n, palette) {
+  
+  # set the state of the random number generator
+  set.seed(seed)
+  
+  # data frame containing random values for 
+  # aesthetics we might want to use in the art
+  dat <- tibble(
+    x0 = runif(n),
+    y0 = runif(n),
+    x1 = x0 + runif(n, min = -.2, max = .2),
+    y1 = y0 + runif(n, min = -.2, max = .2),
+    shade = runif(n), 
+    size = runif(n)
+  )
+  
+  # plot segments in various colours, using 
+  # polar coordinates and a gradient palette
+  dat |> 
+    ggplot(aes(
+      x = x0,
+      y = y0,
+      xend = x1,
+      yend = y1,
+      colour = shade,
+      size = size
+    )) +
+    geom_segment(show.legend = FALSE) +
+    coord_polar() +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0)) + 
+    scale_colour_gradientn(colours = palette) + 
+    scale_size(range = c(0, 10)) + 
+    theme_void()
+}
+```
+
+```{r}
+polar_art(seed = 1, n = 500, palette = c("antiquewhite", "orange", "bisque"))
+polar_art(seed = 1, n = 500, palette = c("red", "black", "white"))
+polar_art(seed = 2, n = 50, palette = c("red", "black", "white"))
+```
+
+
+### Exercise 2
+#### 1.
+```{r}
+polar_art(4, 64, palette = c('red', 'white', 'blue'))
+polar_art(4, 200, palette = c('red', 'white', 'blue'))
+polar_art(110, 100, palette = c('salmon', 'lightyellow', 'lightblue'))
+```
+
+#### 2.
+```{r}
+polar_art2 <- function(seed, n, palette) {
+  
+  # set the state of the random number generator
+  set.seed(seed)
+  
+  # data frame containing random values for 
+  # aesthetics we might want to use in the art
+  dat <- tibble(
+    x0 = runif(n),
+    y0 = runif(n),
+    x1 = x0 + runif(n, min = -.2, max = .2),
+    y1 = y0 + runif(n, min = -.2, max = .2),
+    shade = runif(n), 
+    size = runif(n)
+  )
+  
+  # plot segments in various colours, using 
+  # polar coordinates and a gradient palette
+  dat |> 
+    ggplot(aes(
+      x = x0,
+      y = y0,
+      xend = x1,
+      yend = y1,
+      colour = shade,
+      size = size
+    )) +
+    geom_segment(show.legend = FALSE) +
+    # removed the polar coordinate
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0)) + 
+    scale_colour_gradientn(colours = palette) + 
+    scale_size(range = c(0, 10)) + 
+    theme_void()
+}
+```
+
+```{r}
+polar_art2(1, 16, palette = c('red', 'white', 'blue'))
+polar_art2(4, 200, palette = c('red', 'white', 'blue'))
+polar_art2(110, 900, palette = c('salmon', 'lightyellow', 'lightblue'))
+```
+
+### End of Exercise 2
+
+```{r}
+library(scales)
+library(ggthemes)
+```
+
+```{r}
+pal <- c("#cdb4db", "#ffc8dd", "#ffafcc", "#bde0fe", "#a2d2ff")
+```
+
+```{r}
+show_col(pal)
+```
+
+```{r}
+palette_fn <- colorRampPalette(pal)
+```
+
+```{r}
+palette_fn(100)
+```
+
+```{r}
+image(
+  x = matrix(1:100, ncol = 1), 
+  col = palette_fn(100),
+  useRaster = TRUE,
+  axes = FALSE
+)
+```
+
+```{r}
+canva_palettes[[101]]
+```
+
+```{r}
+show_col(canva_palettes[[101]])
+```
+
+
+```{r}
+sample_canva <- function(seed = NULL) {
+  if(!is.null(seed)) set.seed(seed)
+  sample(ggthemes::canva_palettes, 1)[[1]]
+}
+```
+
+```{r}
+polar_art(seed = 2, n = 100, palette = sample_canva(seed = 2))
+polar_art(seed = 2, n = 100, palette = sample_canva(seed = 3))
+polar_art(seed = 2, n = 100, palette = sample_canva(seed = 4))
+```
+
+```{r}
+polar_art(seed = 5, n = 100, palette = sample_canva(seed = 1))
+polar_art(seed = 6, n = 100, palette = sample_canva(seed = 1))
+polar_art(seed = 7, n = 100, palette = sample_canva(seed = 1))
+```
+
+### Exercise 3
+#### 1.
+```{r}
+sample_canva(1)
+sample_canva(2)
+sample_canva(3)
+
+show_col(sample_canva(1))
+show_col(sample_canva(2))
+show_col(sample_canva(3))
+```
+
+#### 2.
+```{r}
+sample_named_colours <- function(n) {
+  colours <- colours(distinct = TRUE)
+  sampled_colours <- sample(colours, size = n)
+  return(sampled_colours)
+}
+
+# trying polar_art function with palette generator
+polar_art(seed = 12, n = 1000, palette = sample_named_colours(8))
+```
+
+#### 3. 
+```{r}
+random_palette <- function(n) {
+  colours <- unlist(ggthemes::canva_palettes)
+  sampled_colours <- sample(colours, size = n)
+  return(sampled_colours)
+}
+
+# trying polar_art function with palette generator
+polar_art(seed = 12, n = 1000, palette = random_palette(8))
+```
+
+### End of Exercise 3
+
+```{r}
+sample_data <- function(seed = NULL, n = 100){
+  if(!is.null(seed)) set.seed(seed)
+  dat <- tibble(
+    x0 = runif(n),
+    y0 = runif(n),
+    x1 = x0 + runif(n, min = -.2, max = .2),
+    y1 = y0 + runif(n, min = -.2, max = .2),
+    shade = runif(n), 
+    size = runif(n),
+    shape = factor(sample(0:22, size = n, replace = TRUE))
+  )
+}
+```
+
+```{r}
+polar_styled_plot <- function(data = NULL, palette) {
+  ggplot(
+    data = data,
+    mapping = aes(
+      x = x0,
+      y = y0,
+      xend = x1,
+      yend = y1,
+      colour = shade,
+      size = size
+    )) + 
+    coord_polar(clip = "off") +
+    scale_y_continuous(
+      expand = c(0, 0),
+      limits = c(0, 1), 
+      oob = scales::oob_keep
+    ) +
+    scale_x_continuous(
+      expand = c(0, 0), 
+      limits = c(0, 1), 
+      oob = scales::oob_keep
+    ) + 
+    scale_colour_gradientn(colours = palette) + 
+    scale_size(range = c(0, 10)) + 
+    theme_void() + 
+    guides(
+      colour = guide_none(),
+      size = guide_none(),
+      fill = guide_none(),
+      shape = guide_none()
+    )
+}
+```
+
+```{r}
+dat <- sample_data(n = 100, seed = 1) 
+pal <- sample_canva(seed = 1)
+
+polar_styled_plot(data = dat, palette = pal) + geom_segment()
+polar_styled_plot(data = dat, palette = pal) + geom_path()
+polar_styled_plot(data = dat, palette = pal) + geom_point()
+```
+
+```{r}
+library(dplyr)
+
+dat1 <- sample_data(n = 2000, seed = 123) 
+dat2 <- sample_data(n = 100, seed = 456) |>  
+  mutate(y0 = .3 + y0 * .6, y1 = .3)
+
+polar_styled_plot(palette = sample_canva(seed = 7)) + 
+  geom_segment(
+    data = dat1 |> mutate(size = size * 3)
+  ) + 
+  geom_segment(
+    data = dat2 |> mutate(size = size / 5), 
+    lineend = "round", 
+    colour = "white"
+  ) +
+  geom_segment(
+    data = dat2 |> mutate(size = size / 40), 
+    lineend = "round", 
+    colour = "#222222"
+  ) +
+  geom_point(
+    data = dat2 |> mutate(size = size * 2),
+    colour = "#222222"
+  )
+```
+```{r}
+dat <- sample_data(n = 2000, seed = 123) |>
+  mutate(y1 = y0, size = size / 2)
+
+polar_styled_plot(palette = sample_canva(seed = 456)) + 
+  geom_segment(data = dat) + 
+  geom_segment(data = dat |> mutate(y1 = y1 - .2, y0 = y0 - .2)) +
+  geom_segment(data = dat |> mutate(y1 = y1 - .4, y0 = y0 - .4))
+```
+
+```{r}
+dat <- sample_data(n = 1000, seed = 1) |>
+  mutate(y1 = y0, size = size / 4)
+
+polar_styled_plot(palette = sample_canva(seed = 2)) + 
+  geom_segment(data = dat, linetype = "331311") 
+```
+
+### Exercise 4
+
+#### 1. 
+```{r}
+dat3 <- sample_data(n = 1233, seed = 113) |>
+  mutate(y1 = y0, size = size * 14)
+
+polar_styled_plot(palette = random_palette(3)) + 
+  geom_segment(data = dat, linetype = "424242")
+```
+
+#### 2.
+```{r}
+normal_styled_plot <- function(data = NULL, palette) {
+  ggplot(
+    data = data,
+    mapping = aes(
+      x = x0,
+      y = y0,
+      xend = x1,
+      yend = y1,
+      colour = shade,
+      size = size *2
+    )) +
+    scale_y_continuous(
+      expand = c(0, 0),
+      limits = c(0, 1), 
+      oob = scales::oob_keep
+    ) +
+    scale_x_continuous(
+      expand = c(0, 0), 
+      limits = c(0, 1), 
+      oob = scales::oob_keep
+    ) + 
+    scale_colour_gradientn(colours = palette) + 
+    scale_size(range = c(0, 10)) + 
+    theme_void() + 
+    guides(
+      colour = guide_none(),
+      size = guide_none(),
+      fill = guide_none(),
+      shape = guide_none()
+    )
+}
+```
+
+```{r}
+# plots a similar thing, but NOT in polar coordinates
+normal_styled_plot(palette = random_palette(4)) + 
+  geom_segment(data = dat3, linetype = "424242")
+```
+
+
+
+### End of Exercise 4
+
+# Task 2
+
+```{r}
+library(dplyr)
+library(purrr)
+library(tibble)
+library(ggplot2)
+library(ggthemes)
+library(ambient)
+```
+
+```{r}
+sample_canva <- function(seed = NULL) {
+  if(!is.null(seed)) set.seed(seed)
+  sample(ggthemes::canva_palettes, 1)[[1]]
+}
+```
+
+```{r}
+sample_canva()
+sample_canva()
+sample_canva()
+```
+
+```{r}
+sample_cross_matrix <- function(n = 10, seed = NULL) {
+  if(!is.null(seed)) set.seed(seed)
+  mat <- matrix(data = 0, nrow = n, ncol = n)
+  mat[sample(n, 1), ] <- 1
+  mat[, sample(n, 1)] <- 1
+  return(mat)
+}
+
+sample_cross_matrix()
+```
+
+```{r}
+image(sample_cross_matrix(n = 50), axes = FALSE, useRaster = TRUE)
+image(sample_cross_matrix(n = 50), axes = FALSE, useRaster = TRUE)
+image(sample_cross_matrix(n = 50), axes = FALSE, useRaster = TRUE)
+```
+
+```{r}
+x_coords <- seq(from = 0, to = 1, length.out = 800)
+y_coords <- seq(from = 0, to = 1, length.out = 800)
+```
+
+```{r}
+canvas <- long_grid(x = x_coords, y = y_coords) 
+canvas
+```
+
+```{r}
+gen_perlin(x = 1:5, y = 1, frequency = .001, seed = 1)
+gen_perlin(x = 1:5, y = 1, frequency = .5, seed = 1)
+```
+
+```{r}
+canvas <- canvas |> 
+  mutate(paint = gen_perlin(x, y, frequency = 10, seed = 1234))
+canvas
+```
+
+```{r}
+art <- ggplot(canvas, aes(x, y, fill = paint)) + 
+  geom_raster(show.legend = FALSE) 
+```
+
+```{r}
+art
+art + 
+  theme_void() +
+  coord_equal()
+art + 
+  theme_void() +
+  coord_equal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours = sample_canva())
+```
+
+### Excerise 1
+#### 1.
+
+```{r}
+# chanign gen_perlin() to get new results
+canvas <- canvas |> 
+  mutate(paint = gen_perlin(x, y, frequency = 1, seed = 3068))
+canvas
+
+art <- ggplot(canvas, aes(x, y, fill = paint)) + 
+  geom_raster(show.legend = FALSE) 
+
+art
+art + 
+  theme_void() +
+  coord_equal()
+art + 
+  theme_void() +
+  coord_equal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_gradientn(colours = sample_canva())
+```
+
+### End of Exercise 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
