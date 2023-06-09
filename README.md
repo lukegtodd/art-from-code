@@ -1,6 +1,6 @@
 [Art from code](https://art-from-code.netlify.app/)
 ================
-
+This is the link to my [knit](Choyoa3.html)
 ### rstudio::conf 2022
 
 by Danielle Navarro
